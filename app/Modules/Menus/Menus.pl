@@ -38,7 +38,7 @@ login :-
             getDados(Login, Dados),
             nth0(3, Dados, IsAdm),
             (
-                isAdm == false -> 
+                isAdm = false -> 
                 telaLogin(Login)
                 ;
                 telaLoginAdm(Login)
@@ -84,34 +84,83 @@ telaLogin(Login) :-
             telaPerfil(Login)
         ;
         Opcao = 2 ->
+            telaUserIngressos(Login)
+        ;
+        Opcao = 3 ->
+            menuInicial
+        ;
+        write('Opcao Invalida!'), nl
+    ).
+
+telaUserIngressos(Login) :-
+    write('________________________'), nl,
+    write('Menu>Login>Ingressos'), nl,
+    write('________________________'), nl,
+    write('1 - Ver meus ingressos'), nl,
+    write('2 - Comprar Ingressos'), nl,
+    write('3 - Ver Filmes em Cartaz'), nl,
+    write('4 - Voltar'), nl,
+    read(Opcao),
+    (
+        Opcao = 1 ->
+            telaListaIngressos(Login)
+        ;
+        Opcao = 2 ->
+            telaCompraIngressos(Login)
+        ;
+        Opcao = 3 ->
+            %telaListaFilmes
+        ;
+        Opcao = 4 ->
+            telaLogin(Login)
+        ;
+        write('Opcao Invalida!'), nl
+    ).
+
+telaListaIngressos(Login) :-
+    directoryDatabase(Directory),
+    concatenar_strings(Directory, Login, DirectoryLogin),
+    concatenar_strings(DirectoryLogin, '/', DirectoryLoginBarra),
+    concatenar_strings(DirectoryLoginBarra, 'ingressos', DirectoryIngressos),
+    write('Menu>Login>Ingressos>Meus Ingressos'), nl,
+    write(''), nl,
+    write('Meus Ingressos:'), nl,
+    list_folders(DirectoryIngressos, Login, Login).
+
+telaCompraIngressos(Login) :-
+    write('Nome do Filme: '), nl,
+    read(Name),
+    write('Id do Filme: '), nl,
+    read(IdFilme),
+    Valor is 10 + 10,
+    createIngresso(Login, Name, IdFilme, Valor),
+    write('Ingresso comprado com sucesso!'), nl,
+    telaUserIngressos(Login).
+
+telaLoginAdm(Login) :-
+    write('________________________'), nl,
+    write('Menu>Login'), nl,
+    write('________________________'), nl,
+    write('1 - Perfil'), nl,
+    write('2 - Cadastrar Filmes'), nl,
+    write('3 - Dashboard'), nl,
+    write('4 - Logout'), nl,
+    read(Opcao),
+    (
+        Opcao = 1 ->
+            telaPerfil(Login)
+        ;
+        Opcao = 2 ->
             telaListas(Login)
         ;
         Opcao = 3 ->
             menuInicial
         ;
-            write('Opcao Invalida!'), nl
-    ).
-
-telaLoginAdm(Login) :-
-write('________________________'), nl,
-write('Menu>Login'), nl,
-write('________________________'), nl,
-write('1 - Perfil'), nl,
-write('2 - Cadastrar Filmes'), nl,
-write('3 - Logout'), nl,
-read(Opcao),
-(
-    Opcao = 1 ->
-        telaPerfil(Login)
-    ;
-    Opcao = 2 ->
-        telaListas(Login)
-    ;
-    Opcao = 3 ->
-        menuInicial
-    ;
+        Opcao = 4 ->
+            menuInicial
+        ;
         write('Opcao Invalida!'), nl
-).
+    ).
 
 telaPerfil(Login) :-
     write('________________________'),nl,
@@ -150,3 +199,42 @@ telaExibirPerfil(Login) :-
         ;
             write('Opcao Invalida!'), nl
     ).
+
+
+%Funções auxiliares pra listar listas
+%==================================================
+list_folders(Directory, Username, Username) :-
+    directory_files(Directory, Files),
+    exclude(hidden_file, Files, Folders),
+    print_folder_names(Folders, 1),
+    choose_folder(Folders, Username, Username).
+
+print_folder_names([], _).
+print_folder_names([Folder|Rest], N) :-
+    \+ special_folder(Folder), % Verifica se a pasta é "." ou ".."
+    format('~d - ~w~n', [N, Folder]),
+    NextN is N + 1,
+    print_folder_names(Rest, NextN).
+
+print_folder_names([_|Rest], N) :-
+    NextN is N + 1,
+    print_folder_names(Rest, NextN).
+
+choose_folder(Folders, Username, Username) :-
+    write('Escolha o número da pasta (ou 0 para sair): '),
+    read(Number),
+    process_choice(Number, Folders, Username, Username).
+
+process_choice(0, _, _, _) :- telaListas(Username).
+process_choice(Number, Folders, Username, Username) :-
+    number(Number),
+    nth1(Number, Folders, Folder),
+    format('Você escolheu a pasta: ~w~n', [Folder]),
+    telaAcessoLista(Username, Username, Folder).
+
+hidden_file(File) :-
+    sub_atom(File, 0, 1, _, '.').
+    
+special_folder('.').
+special_folder('..').
+%===========================================================================

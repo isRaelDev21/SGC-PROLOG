@@ -39,3 +39,18 @@ loginUserDatabase(Username, Password) :-
     concatenar_strings(DirectoryUser2, Usernametxt, DirectoryUserFinal),
     ler_user(DirectoryUserFinal, Dados),
     verificar_senha(Dados, Password).
+
+createIngressoDatabase(Username, FilmeName, IdFilme, Valor) :-
+    directoryDatabase(Directory),
+    atomic_list_concat([Directory, '/', Username, '/ingressos/', FilmeName], ListDir),
+    atomic_list_concat([ListDir, '/', FilmeName, '.txt'], FilePath),
+\+ exists_directory(ListDir), % Verifica se o diretório não existe
+    make_directory_path(ListDir), % Cria o diretório e seus pais, se necessário
+    open(FilePath, write, Stream),
+    format(Stream, "~w~n", [IdFilme]),
+    format(Stream, "~w~n", [FilmeName]),
+    close(Stream).
+
+deleteIngressoDatabase(Username, Name) :-
+    atomic_list_concat([directoryDatabase, Username, '/ingressos/', ListName], DirectoryPath),
+    delete_directory(DirectoryPath).
