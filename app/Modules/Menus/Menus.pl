@@ -1,4 +1,5 @@
 :- consult('../Users/User.pl').
+:- consult('../Ingresso/Ingresso.pl').
 :- consult('../Util/Util.pl').
 %:- consult('../ToDoList/ToDoList.pl').
 :- consult('../Database/Database.pl').
@@ -109,9 +110,6 @@ telaUserIngressos(Login) :-
         Opcao = 2 ->
             telaCompraIngressos(Login)
         ;
-        Opcao = 3 ->
-            %telaListaFilmes
-        ;
         Opcao = 4 ->
             telaLogin(Login)
         ;
@@ -130,11 +128,11 @@ telaListaIngressos(Login) :-
 
 telaCompraIngressos(Login) :-
     write('Nome do Filme: '), nl,
-    read(Name),
+    read(Nome),
     write('Id do Filme: '), nl,
     read(IdFilme),
     Valor is 10 + 10,
-    createIngresso(Login, Name, IdFilme, Valor),
+    createIngresso(Login, Nome, IdFilme, Valor),
     write('Ingresso comprado com sucesso!'), nl,
     telaUserIngressos(Login).
 
