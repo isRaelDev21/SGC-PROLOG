@@ -40,6 +40,7 @@ loginUserDatabase(Username, Password) :-
     ler_user(DirectoryUserFinal, Dados),
     verificar_senha(Dados, Password).
 
+%Funções relacionadas a Ingressos
 createIngressoDatabase(Username, FilmeName, IdFilme, Valor, Assento) :-
     directoryDatabase(Directory),
     atomic_list_concat([Directory, '/', Username, '/ingressos/', FilmeName], ListDir),

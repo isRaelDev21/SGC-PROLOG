@@ -207,19 +207,29 @@ telaExibirPerfil(Login) :-
 list_folders(Directory, Username, Username) :-
     directory_files(Directory, Files),
     exclude(hidden_file, Files, Folders),
-    print_folder_names(Folders, 1),
+    print_folder_names(Username, Folders, 1),
     choose_folder(Folders, Username, Username).
 
-print_folder_names([], _).
-print_folder_names([Folder|Rest], N) :-
+print_folder_names(Username, [], _).
+print_folder_names(Username, [Folder|Rest], N) :-
     \+ special_folder(Folder), % Verifica se a pasta é "." ou ".."
     format('~d - ~w~n', [N, Folder]),
+    directoryDatabase(Directory), 
+    concatenar_strings(Directory, Username, DirectoryUser),
+    concatenar_strings(DirectoryUser, '/ingressos', DirectoryIngressos),
+    concatenar_strings(DirectoryIngressos, '/', DirectoryIngressos2),
+    concatenar_strings(DirectoryIngressos2, Folder, DirectoryIngressosFolder),
+    concatenar_strings(Folder, '.txt', Foldertxt),
+    concatenar_strings(DirectoryIngressosFolder, '/', DirectoryIngressosFolder2),
+    concatenar_strings(DirectoryIngressosFolder2, Foldertxt, DirectoryUserFinal),
+    ler_user(DirectoryUserFinal, Dados),
+    write(Dados), nl,
     NextN is N + 1,
-    print_folder_names(Rest, NextN).
+    print_folder_names(Username, Rest, NextN).
 
-print_folder_names([_|Rest], N) :-
+print_folder_names(Username, [_|Rest], N) :-
     NextN is N + 1,
-    print_folder_names(Rest, NextN).
+    print_folder_names(Username, Rest, NextN).
 
 choose_folder(Folders, Username, Username) :-
     write('Escolha o número da pasta (ou 0 para sair): '),
