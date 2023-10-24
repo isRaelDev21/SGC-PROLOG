@@ -38,7 +38,7 @@ login :-
             nth0(3, Dados, IsAdm),
             write('Login realizado com sucesso!'), nl,
             (
-                callable(IsAdm) -> 
+                checkUserType(IsAdm, "true") -> 
                 telaLoginAdm(Login)
                 ;
                 telaLogin(Login)
@@ -48,9 +48,7 @@ login :-
             login
     ).
 
-checkUserType(false, 1).
-checkUserType(true, 0).
-
+checkUserType(IsAdm, IsAdm).
 
 telaCadastroUser :-
     write('Nome: '), nl,
