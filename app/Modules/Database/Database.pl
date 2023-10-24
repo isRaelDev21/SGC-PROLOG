@@ -40,7 +40,7 @@ loginUserDatabase(Username, Password) :-
     ler_user(DirectoryUserFinal, Dados),
     verificar_senha(Dados, Password).
 
-createIngressoDatabase(Username, FilmeName, IdFilme, Valor) :-
+createIngressoDatabase(Username, FilmeName, IdFilme, Valor, Assento) :-
     directoryDatabase(Directory),
     atomic_list_concat([Directory, '/', Username, '/ingressos/', FilmeName], ListDir),
     atomic_list_concat([ListDir, '/', FilmeName, '.txt'], FilePath),
@@ -49,6 +49,8 @@ createIngressoDatabase(Username, FilmeName, IdFilme, Valor) :-
     open(FilePath, write, Stream),
     format(Stream, "~w~n", [IdFilme]),
     format(Stream, "~w~n", [FilmeName]),
+    format(Stream, "~w~n", [Valor]),
+    format(Stream, "~w~n", [Assento]),
     close(Stream).
 
 deleteIngressoDatabase(Username, Name) :-

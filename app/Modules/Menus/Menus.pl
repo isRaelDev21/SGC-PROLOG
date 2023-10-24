@@ -131,8 +131,10 @@ telaCompraIngressos(Login) :-
     read(Nome),
     write('Id do Filme: '), nl,
     read(IdFilme),
+    write('Assento: '), nl,
+    read(Assento),
     Valor is 10 + 10,
-    createIngresso(Login, Nome, IdFilme, Valor),
+    createIngresso(Login, Nome, IdFilme, Valor, Assento),
     write('Ingresso comprado com sucesso!'), nl,
     telaUserIngressos(Login).
 
