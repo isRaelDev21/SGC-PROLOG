@@ -34,19 +34,22 @@ login :-
     read(Senha),
     (
         loginUser(Login, Senha) ->
-            write('Login realizado com sucesso!'), nl,
             getDados(Login, Dados),
             nth0(3, Dados, IsAdm),
+            write('Login realizado com sucesso!'), nl,
             (
-                isAdm = false -> 
-                telaLogin(Login)
-                ;
+                callable(IsAdm) -> 
                 telaLoginAdm(Login)
+                ;
+                telaLogin(Login)
             )
         ;
             write('Senha incorreta!'), nl,
             login
     ).
+
+checkUserType(false, 1).
+checkUserType(true, 0).
 
 
 telaCadastroUser :-
